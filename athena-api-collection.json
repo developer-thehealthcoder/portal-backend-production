@@ -1,0 +1,279 @@
+{
+	"info": {
+		"name": "Med Office HQ - Athena Health API",
+		"description": "Collection of all Athena Health related API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "athena-api"
+	},
+	"item": [
+		{
+			"name": "Patient Management",
+			"item": [
+				{
+					"name": "Get Patient List",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"start_date\": \"01/01/2024\",\n  \"end_date\": \"12/31/2024\",\n  \"excluded_patient_ids\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/patient-list",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "patient-list"]
+						},
+						"description": "Get a list of patients with basic information for the frontend workflow. This endpoint supports filtering out specific patients by their IDs."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Patient",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/search-patient?firstname=John&lastname=Doe&dob=01/01/1990",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "search-patient"],
+							"query": [
+								{
+									"key": "firstname",
+									"value": "John",
+									"description": "Patient's first name"
+								},
+								{
+									"key": "lastname",
+									"value": "Doe",
+									"description": "Patient's last name"
+								},
+								{
+									"key": "dob",
+									"value": "01/01/1990",
+									"description": "Date of birth (MM/DD/YYYY)"
+								}
+							]
+						},
+						"description": "Search for existing patient in Athena Health. Uses firstname, lastname, and dob to find patient."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Patient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstname\": \"John\",\n  \"lastname\": \"Doe\",\n  \"departmentid\": \"1\",\n  \"dob\": \"01/01/1990\",\n  \"email\": \"john.doe@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/create-patient?firstname=John&lastname=Doe&departmentid=1&dob=01/01/1990&email=john.doe@example.com",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "create-patient"],
+							"query": [
+								{
+									"key": "firstname",
+									"value": "John",
+									"description": "Patient's first name"
+								},
+								{
+									"key": "lastname",
+									"value": "Doe",
+									"description": "Patient's last name"
+								},
+								{
+									"key": "departmentid",
+									"value": "1",
+									"description": "Department ID"
+								},
+								{
+									"key": "dob",
+									"value": "01/01/1990",
+									"description": "Date of birth (MM/DD/YYYY)"
+								},
+								{
+									"key": "email",
+									"value": "john.doe@example.com",
+									"description": "Patient's email address"
+								}
+							]
+						},
+						"description": "Create a new patient in Athena Health. Accepts both query parameters and JSON body (GHL customData format)."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Patient (GHL Format)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customData\": {\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"departmentid\": \"1\",\n    \"dob\": \"01/01/1990\",\n    \"email\": \"john.doe@example.com\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/create-patient",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "create-patient"]
+						},
+						"description": "Create a new patient using GHL customData format in JSON body."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing patients"
+		},
+		{
+			"name": "Appointment Management",
+			"item": [
+				{
+					"name": "Get Appointment Slots",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/appointment-slots?departmentid=1&providerid=5&is_new_patient=false&startdate=01/01/2024",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "appointment-slots"],
+							"query": [
+								{
+									"key": "departmentid",
+									"value": "1",
+									"description": "Department ID",
+									"required": true
+								},
+								{
+									"key": "providerid",
+									"value": "5",
+									"description": "Provider ID (7, 8 for Physical Therapy; 5, 2 for Office Visit)",
+									"required": true
+								},
+								{
+									"key": "is_new_patient",
+									"value": "false",
+									"description": "Whether this is a new patient (true/false)",
+									"required": false
+								},
+								{
+									"key": "startdate",
+									"value": "01/01/2024",
+									"description": "Start date for available slots (MM/DD/YYYY)",
+									"required": true
+								}
+							]
+						},
+						"description": "Get available appointment slots for a provider. Automatically determines appointment type based on provider and patient status. Returns available dates and times for AI agent to show to patient."
+					},
+					"response": []
+				},
+				{
+					"name": "Book Appointment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/book-appointment/?appointmentid=12345&providerid=5&patientid=67890&is_new_patient=false",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "book-appointment", ""],
+							"query": [
+								{
+									"key": "appointmentid",
+									"value": "12345",
+									"description": "Appointment slot ID to book",
+									"required": true
+								},
+								{
+									"key": "providerid",
+									"value": "5",
+									"description": "Provider ID",
+									"required": true
+								},
+								{
+									"key": "patientid",
+									"value": "67890",
+									"description": "Patient ID",
+									"required": true
+								},
+								{
+									"key": "is_new_patient",
+									"value": "false",
+									"description": "Whether this is a new patient (true/false)",
+									"required": false
+								}
+							]
+						},
+						"description": "Book an appointment by confirming the selected slot. Automatically determines appointment type based on provider and patient status."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Appointment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/cancel-appointment",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "cancel-appointment"]
+						},
+						"description": "Cancel the specific appointment (ID: 1406369) for GHL voice agent testing. This is a simple one-call endpoint to remove the appointment from Athena."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing appointments"
+		},
+		{
+			"name": "Provider Management",
+			"item": [
+				{
+					"name": "Get Providers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/medofficehq/athena/providers?departmentid=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "medofficehq", "athena", "providers"],
+							"query": [
+								{
+									"key": "departmentid",
+									"value": "1",
+									"description": "Department ID",
+									"required": true
+								}
+							]
+						},
+						"description": "Get all available providers for a department. Returns provider names and IDs for AI agent to show to patient."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing providers"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
+

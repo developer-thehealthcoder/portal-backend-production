@@ -1,0 +1,561 @@
+{
+	"info": {
+		"name": "Athena Health API - Preview Environment",
+		"description": "Collection of all Athena Health API endpoints used in the project (Preview Environment). Includes endpoints used by: AI Telephone Agent, Rule 21, Rule 22, Patient Management, and Appointment Scheduling.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "athena-health-api"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get OAuth Access Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{base64_credentials}}",
+								"description": "Base64 encoded client_id:client_secret"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "athena/service/Athenanet.MDP.*",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{athena_base_url}}/oauth2/v1/token",
+							"host": ["{{athena_base_url}}"],
+							"path": ["oauth2", "v1", "token"]
+						},
+						"description": "Get OAuth2 access token using client credentials. Base URL: https://api.preview.platform.athenahealth.com"
+					},
+					"response": []
+				}
+			],
+			"description": "OAuth2 authentication endpoints"
+		},
+		{
+			"name": "Departments",
+			"item": [
+				{
+					"name": "Get Departments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"description": "OAuth access token"
+							}
+						],
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/departments",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "departments"]
+						},
+						"description": "Get all departments for the practice. **Used by AI Agent** - Required before getting providers and appointments"
+					},
+					"response": []
+				}
+			],
+			"description": "Department management endpoints"
+		},
+		{
+			"name": "Patients",
+			"item": [
+				{
+					"name": "Search Patients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/patients?firstname=John&lastname=Doe&dob=01/01/1990",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "patients"],
+							"query": [
+								{
+									"key": "firstname",
+									"value": "John",
+									"description": "Patient's first name"
+								},
+								{
+									"key": "lastname",
+									"value": "Doe",
+									"description": "Patient's last name"
+								},
+								{
+									"key": "dob",
+									"value": "01/01/1990",
+									"description": "Date of birth (MM/DD/YYYY)"
+								}
+							]
+						},
+						"description": "Search for existing patients in Athena Health. **Used by AI Agent** - Step 2 of AI Telephone workflow: Patient Search"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Patient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstname",
+									"value": "John",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "Doe",
+									"type": "text"
+								},
+								{
+									"key": "departmentid",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "dob",
+									"value": "01/01/1990",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "john.doe@example.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/patients",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "patients"]
+						},
+						"description": "Create a new patient in Athena Health. **Used by AI Agent** - Step 3 of AI Telephone workflow: Patient Creation (if patient not found)"
+					},
+					"response": []
+				}
+			],
+			"description": "Patient management endpoints"
+		},
+		{
+			"name": "Providers",
+			"item": [
+				{
+					"name": "Get Providers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/providers?departmentid=1",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "providers"],
+							"query": [
+								{
+									"key": "departmentid",
+									"value": "1",
+									"description": "Department ID",
+									"required": true
+								}
+							]
+						},
+						"description": "Get all available providers for a department. **Used by AI Agent** - Step 4 of AI Telephone workflow: Provider Selection"
+					},
+					"response": []
+				}
+			],
+			"description": "Provider management endpoints"
+		},
+		{
+			"name": "Appointments",
+			"item": [
+				{
+					"name": "Get Booked Appointments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/appointments/booked?startdate=01/01/2024&enddate=12/31/2024&departmentid=1&showpatientdetail=true&showinsurance=true&showclaimdetail=true&showexpectedprocedurecodes=true",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "appointments", "booked"],
+							"query": [
+								{
+									"key": "startdate",
+									"value": "01/01/2024",
+									"description": "Start date (MM/DD/YYYY)",
+									"required": true
+								},
+								{
+									"key": "enddate",
+									"value": "12/31/2024",
+									"description": "End date (MM/DD/YYYY)",
+									"required": true
+								},
+								{
+									"key": "departmentid",
+									"value": "1",
+									"description": "Department ID (optional)"
+								},
+								{
+									"key": "patientid",
+									"value": "",
+									"description": "Patient ID (optional)"
+								},
+								{
+									"key": "showpatientdetail",
+									"value": "true",
+									"description": "Include patient details"
+								},
+								{
+									"key": "showinsurance",
+									"value": "true",
+									"description": "Include insurance information"
+								},
+								{
+									"key": "showclaimdetail",
+									"value": "true",
+									"description": "Include claim details"
+								},
+								{
+									"key": "showexpectedprocedurecodes",
+									"value": "true",
+									"description": "Include expected procedure codes"
+								}
+							]
+						},
+						"description": "Get booked appointments for a department within a date range with enhanced details. **Used by Rule 21 & Rule 22** - Fetches appointment data with claims for modifier analysis"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Open Appointment Slots",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/appointments/open?departmentid=1&providerid=5&appointmenttypeid=2&startdate=01/01/2024&showfrozenslots=true&ignoreschedulablepermission=true&bypassscheduletimechecks=true",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "appointments", "open"],
+							"query": [
+								{
+									"key": "departmentid",
+									"value": "1",
+									"description": "Department ID",
+									"required": true
+								},
+								{
+									"key": "providerid",
+									"value": "5",
+									"description": "Provider ID",
+									"required": true
+								},
+								{
+									"key": "appointmenttypeid",
+									"value": "2",
+									"description": "Appointment Type ID (2=New, 3=Established, 181=PT New, 161=PT Established)",
+									"required": true
+								},
+								{
+									"key": "startdate",
+									"value": "01/01/2024",
+									"description": "Start date (MM/DD/YYYY)",
+									"required": true
+								},
+								{
+									"key": "showfrozenslots",
+									"value": "true",
+									"description": "Show frozen slots"
+								},
+								{
+									"key": "ignoreschedulablepermission",
+									"value": "true",
+									"description": "Ignore schedulable permission"
+								},
+								{
+									"key": "bypassscheduletimechecks",
+									"value": "true",
+									"description": "Bypass schedule time checks"
+								}
+							]
+						},
+						"description": "Get available appointment slots for a provider. **Used by AI Agent** - Step 5 of AI Telephone workflow: Appointment Slot Availability. Automatically determines appointment type based on provider and patient status (Physical Therapy: 181/161, Office Visit: 2/3)"
+					},
+					"response": []
+				},
+				{
+					"name": "Book Appointment Slot",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "providerid",
+									"value": "5",
+									"type": "text",
+									"description": "Provider ID"
+								},
+								{
+									"key": "patientid",
+									"value": "12345",
+									"type": "text",
+									"description": "Patient ID"
+								},
+								{
+									"key": "appointmenttypeid",
+									"value": "2",
+									"type": "text",
+									"description": "Appointment Type ID"
+								},
+								{
+									"key": "ignoreschedulablepermission",
+									"value": "true",
+									"type": "text",
+									"description": "Ignore schedulable permission"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/appointments/{{appointment_id}}",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "appointments", "{{appointment_id}}"]
+						},
+						"description": "Book an appointment slot by confirming it. Uses form-encoded data as required by Athena Health API. **Used by AI Agent** - Step 6 of AI Telephone workflow: Appointment Booking"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Appointment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"appointmentstatus\": \"c\",\n  \"patientid\": \"12345\",\n  \"notes\": \"Appointment cancelled via API\"\n}"
+						},
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/appointments/{{appointment_id}}/cancel?patientid=12345",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "appointments", "{{appointment_id}}", "cancel"],
+							"query": [
+								{
+									"key": "patientid",
+									"value": "12345",
+									"description": "Patient ID (required in URL)"
+								}
+							]
+						},
+						"description": "Cancel an existing appointment in Athena Health"
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"appointmenttypeid\": \"2\",\n  \"departmentid\": \"1\",\n  \"patientid\": \"12345\",\n  \"providerid\": \"5\",\n  \"date\": \"01/15/2024\",\n  \"time\": \"10:00\"\n}"
+						},
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/appointments",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "appointments"]
+						},
+						"description": "Book a new appointment in Athena Health (alternative to booking open slots)"
+					},
+					"response": []
+				}
+			],
+			"description": "Appointment management endpoints"
+		},
+		{
+			"name": "Encounters",
+			"item": [
+				{
+					"name": "Get Encounter Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/encounter/{{encounter_id}}/services",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "encounter", "{{encounter_id}}", "services"]
+						},
+						"description": "Get all procedures/services for an encounter. **Used by Rule 21 & Rule 22** - Retrieves procedures with diagnosis codes for modifier analysis"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Encounter Service",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "modifiers",
+									"value": "25",
+									"type": "text",
+									"description": "Modifier code (e.g., 25, RT, LT, 50, 59)"
+								},
+								{
+									"key": "billforservice",
+									"value": "true",
+									"type": "text",
+									"description": "Bill for service"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{athena_base_url}}/v1/{{practice_id}}/encounter/{{encounter_id}}/services/{{service_id}}",
+							"host": ["{{athena_base_url}}"],
+							"path": ["v1", "{{practice_id}}", "encounter", "{{encounter_id}}", "services", "{{service_id}}"]
+						},
+						"description": "Update an encounter service with modifiers. **Used by Rule 21 & Rule 22** - Rule 21 applies modifier 25, Rule 22 applies RT/LT/50/59 modifiers based on diagnosis codes"
+					},
+					"response": []
+				}
+			],
+			"description": "Encounter and service management endpoints (used for Rule 21 and Rule 22)"
+		}
+	],
+	"variable": [
+		{
+			"key": "athena_base_url",
+			"value": "https://api.preview.platform.athenahealth.com",
+			"type": "string",
+			"description": "Athena Health API base URL (Preview Environment)"
+		},
+		{
+			"key": "practice_id",
+			"value": "YOUR_PRACTICE_ID",
+			"type": "string",
+			"description": "Athena Health Practice ID"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "OAuth access token (obtained from Get OAuth Access Token endpoint)"
+		},
+		{
+			"key": "base64_credentials",
+			"value": "",
+			"type": "string",
+			"description": "Base64 encoded client_id:client_secret for OAuth"
+		},
+		{
+			"key": "appointment_id",
+			"value": "",
+			"type": "string",
+			"description": "Appointment ID"
+		},
+		{
+			"key": "encounter_id",
+			"value": "",
+			"type": "string",
+			"description": "Encounter ID"
+		},
+		{
+			"key": "service_id",
+			"value": "",
+			"type": "string",
+			"description": "Service ID"
+		}
+	]
+}
+

@@ -1,0 +1,23 @@
+fastapi[standard]==0.115.12
+uvicorn[standard]>=0.27.0
+firebase-admin==6.8.0
+azure-cosmos==4.9.0
+python-dotenv==1.1.0
+fastapi-azure-auth==5.1.1
+passlib==1.7.4
+python-jose[cryptography]==3.5.0
+bcrypt==4.0.1
+fastapi-mail==1.5.0
+httpx==0.25.1
+python-multipart==0.0.18 
+requests==2.32.3
+# AI Telephone Platform Dependencies
+twilio==8.12.0
+openai==1.12.0
+elevenlabs==2.16.0
+aiohttp==3.9.1
+pydub==0.25.1
+deepgram-sdk==2.12.0
+websockets==12.0
+numpy==1.24.3
+scipy==1.11.4

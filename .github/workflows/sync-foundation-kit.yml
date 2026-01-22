@@ -1,0 +1,83 @@
+name: Sync from foundation‑kit template
+
+# Run when you push to the foundation‑kit repo's default branch
+on:
+  workflow_dispatch: # manual trigger
+  #   schedule:
+  #     - cron: "0 2 * * *" # optional: nightly at 02:00 UTC
+  repository_dispatch:
+    types: [foundation-kit-updated] # triggered by foundation-kit (step 5)
+
+jobs:
+  sync:
+    name: Sync Foundation Kit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # needed to detect changes
+          token: ${{ secrets.TEMPLATE_SYNC_TOKEN }}
+
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          repository: tellurium-dev/BACKEND-BASE
+          ref: main
+          path: foundation-source
+          token: ${{ secrets.TEMPLATE_SYNC_TOKEN }}
+          submodules: false
+          lfs: false
+
+      - name: Setup Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Sync foundation kit files only
+        run: |
+          # Define foundation kit directories and files to sync
+          FOUNDATION_DIRS=(
+            "app/foundation_kit"
+          )
+
+          # Sync each foundation directory/file
+          for item in "${FOUNDATION_DIRS[@]}"; do
+            if [ -e "foundation-source/$item" ]; then
+              echo "Syncing: $item"
+              # Create parent directory if it doesn't exist
+              mkdir -p "$(dirname "$item")"
+              # Copy the item
+              if [ -d "foundation-source/$item" ]; then
+                rsync -av --delete "foundation-source/$item/" "$item/"
+              else
+                cp "foundation-source/$item" "$item"
+              fi
+            else
+              echo "Warning: $item not found in source repository"
+            fi
+          done
+
+          # Check if there are any changes
+          if git diff --quiet; then
+            echo "No changes detected in foundation kit files"
+            exit 0
+          fi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.TEMPLATE_SYNC_TOKEN }}
+          commit-message: "chore: sync foundation kit updates"
+          title: "chore: sync foundation kit updates"
+          body: |
+            This PR brings in the latest changes from the foundation kit template.
+
+            **Synced directories/files:**
+            - app/foundation_kit
+
+            Please review and merge.
+          branch: sync-foundation-kit
+          #   base: dev
+          delete-branch: true
