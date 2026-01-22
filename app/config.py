@@ -1,32 +1,33 @@
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
 
 # Secret key and algorithm
-SECRET_KEY = "vKOXkQmiC_X676JCwBVXyr712kj643YZjNmc1Vd7aMpD4eRar-x451MqEcGbehDn0MMF0_qS3egfB-Y5Nw3J6g"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # Azure Cosmos DB Settings
-COSMOS_API_URI = "https://medofficehq-db.documents.azure.com:443/"
+COSMOS_API_URI = os.getenv("COSMOS_API_URI")
 COSMOS_API_PRIMARY_KEY = os.getenv("COSMOS_API_PRIMARY_KEY")
-COSMOS_DATABASE = "med-office-hq"
+COSMOS_DATABASE = os.getenv("COSMOS_DATABASE")
 
 # Email configuration
-MAIL_USERNAME = "emailadmin@tellurium.me"
-MAIL_PASSWORD = "MbE8vbUvDTDfNCDP4qtU"
-MAIL_PORT = 465
-MAIL_SERVER = "wednesday.mxrouting.net"
-MAIL_FROM = "Tellurium <emailadmin@tellurium.me>"
+MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+MAIL_PORT = int(os.getenv("MAIL_PORT", "465"))
+MAIL_SERVER = os.getenv("MAIL_SERVER")
+MAIL_FROM = os.getenv("MAIL_FROM")
 
-COMPANY_NAME = "Med Office HQ"
+COMPANY_NAME = os.getenv("COMPANY_NAME", "Med Office HQ")
 
 # Container names - configurable but with sensible defaults
-COSMOS_CONTAINER_USERS = "users"
-COSMOS_CONTAINER_USER_GROUPS = "user_groups"
-COSMOS_CONTAINER_INSTITUTIONS = "institutions"
-COSMOS_CONTAINER_MENU = "menu"
-COSMOS_CONTAINER_PASSWORD_RESETS = "password_resets"
+COSMOS_CONTAINER_USERS = os.getenv("COSMOS_CONTAINER_USERS", "users")
+COSMOS_CONTAINER_USER_GROUPS = os.getenv("COSMOS_CONTAINER_USER_GROUPS", "user_groups")
+COSMOS_CONTAINER_INSTITUTIONS = os.getenv("COSMOS_CONTAINER_INSTITUTIONS", "institutions")
+COSMOS_CONTAINER_MENU = os.getenv("COSMOS_CONTAINER_MENU", "menu")
+COSMOS_CONTAINER_PASSWORD_RESETS = os.getenv("COSMOS_CONTAINER_PASSWORD_RESETS", "password_resets")
 
 # Required containers for the application to function
 REQUIRED_CONTAINERS = [
@@ -38,4 +39,4 @@ REQUIRED_CONTAINERS = [
 ]
 
 # Backend URL for AI telephone service
-BACKEND_URL = "https://medofficehq-backend-hjg4buhcd4b2hfab.canadacentral-01.azurewebsites.net"
+BACKEND_URL = os.getenv("BACKEND_URL")
