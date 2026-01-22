@@ -1,10 +1,15 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Secret key and algorithm
 SECRET_KEY = "vKOXkQmiC_X676JCwBVXyr712kj643YZjNmc1Vd7aMpD4eRar-x451MqEcGbehDn0MMF0_qS3egfB-Y5Nw3J6g"
 ALGORITHM = "HS256"
 
 # Azure Cosmos DB Settings
 COSMOS_API_URI = "https://medofficehq-db.documents.azure.com:443/"
-COSMOS_API_PRIMARY_KEY = "TQQWhtZiIFUraLePCYMfl25PQR4HygOjMEl0Fezfb2zkjpoXw259bW3bVoSvc1FVDKj41UlTsVxgACDbX6O8bQ=="
+COSMOS_API_PRIMARY_KEY = os.getenv("COSMOS_API_PRIMARY_KEY")
 COSMOS_DATABASE = "med-office-hq"
 
 # Email configuration
