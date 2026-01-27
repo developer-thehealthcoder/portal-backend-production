@@ -41,5 +41,5 @@ jobs:
           imageToBuild: aivoiceagent.azurecr.io/medofficehq-backend-production:${{ github.sha }}
 
           # REQUIRED for deployment
-          targetPort: 8000
+          targetPort: 8080
           ingress: external
