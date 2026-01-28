@@ -25,6 +25,10 @@ from typing import Dict, List, Optional, Tuple
 from pydantic import BaseModel
 from app.medofficehq.core.config import settings
 from app.medofficehq.services.athena_service import AthenaService
+from app.medofficehq.core.environment_manager import (
+    environment_manager,
+    AthenaEnvironment
+)
 
 # Add the parent directory to the path so we can import from app
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -90,12 +94,21 @@ class Rule21:
         # Modifier to add
         self.modifier = "25"
         
-        # API configuration
-        self.base_url = settings.ATHENA_API_BASE_URL
-        self.practice_id = settings.ATHENA_PRACTICE_ID
+        # Get production credentials (this is a production-only backend)
+        credentials = environment_manager.get_athena_credentials(AthenaEnvironment.PRODUCTION)
         
-        # Initialize AthenaService for API calls
-        self.athena_service = AthenaService()
+        # API configuration
+        self.base_url = credentials["base_url"]
+        self.practice_id = credentials["practice_id"]
+        
+        # Initialize AthenaService with production credentials
+        self.athena_service = AthenaService(
+            client_id=credentials["client_id"],
+            client_secret=credentials["client_secret"],
+            practice_id=credentials["practice_id"],
+            base_url=credentials["base_url"],
+            environment="production"
+        )
         
         logger.info(f"Initialized {self.name} v{self.version}")
         logger.info(f"Looking for eligible codes: {self.eligible_codes}")
@@ -116,7 +129,7 @@ class Rule21:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services"
+                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",
@@ -276,7 +289,7 @@ class Rule21:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services/{service_id}"
+                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services/{service_id}"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",
@@ -326,7 +339,7 @@ class Rule21:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services/{service_id}"
+                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services/{service_id}"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",
@@ -658,7 +671,7 @@ class Rule21:
         try:
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/appointments/booked"
+                url = f"{self.athena_service.base_url}/{self.practice_id}/appointments/booked"
                 
                 params = {
                     'startdate': patient.appointmentdate,
