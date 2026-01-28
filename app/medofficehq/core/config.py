@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     ATHENA_Client_ID: Optional[str] = None
     ATHENA_Client_Secret: Optional[str] = None
     ATHENA_PRACTICE_ID: Optional[str] = None
-    ATHENA_API_BASE_URL: str = "https://api.preview.platform.athenahealth.com/v1"
+    ATHENA_API_BASE_URL: str = "https://api.platform.athenahealth.com/v1"
     
     class Config:
         env_file = ".env"
