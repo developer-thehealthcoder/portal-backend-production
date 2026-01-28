@@ -65,7 +65,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost:8000",
     # Azure Static Web App Frontend
-    "https://gentle-dune-07304540f.1.azurestaticapps.net",
+    "https://jolly-rock-0894e830f.6.azurestaticapps.net",
     # GHL (Go High Level) webhook domains
     "https://hooks.gohighlevel.com",
     "https://api.gohighlevel.com",

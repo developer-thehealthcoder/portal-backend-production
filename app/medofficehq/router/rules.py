@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter
 from app.medofficehq.core.config import settings
@@ -544,7 +544,9 @@ async def execute_rules_background(execution_id: str, request: UnifiedRuleReques
         logger.error(f"Traceback: {traceback.format_exc()}")
 
 @router.post("/run", response_model=UnifiedRuleResponse)
-async def unified_rules_endpoint(request: UnifiedRuleRequest):
+async def unified_rules_endpoint(
+    request: UnifiedRuleRequest
+):
     """
     Unified endpoint to apply multiple rules at once.
     Returns immediately with execution_id. Rules execute in background.
@@ -734,7 +736,9 @@ class ProjectResultResponse(BaseModel):
     rules_with_errors: List[int]
 
 @router.post("/project-results", response_model=ProjectResultResponse)
-async def get_project_results(request: ProjectIdRequest):
+async def get_project_results(
+    request: ProjectIdRequest
+):
     """
     Get results for a specific project by project ID
     
@@ -793,7 +797,9 @@ async def get_project_results(request: ProjectIdRequest):
         raise HTTPException(status_code=500, detail=f"Error retrieving project results: {str(e)}")
 
 @router.post("/runs/{project_id}/archive")
-async def archive_project(project_id: str):
+async def archive_project(
+    project_id: str
+):
     """
     Archive a project/run by marking it as archived (soft delete)
     

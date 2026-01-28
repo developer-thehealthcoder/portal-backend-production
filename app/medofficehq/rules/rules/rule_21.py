@@ -795,23 +795,23 @@ class Rule21:
                         break
                 
                 # Process the matching result (outside the loop)
-                    if matching_result:
-                        if request.is_rollback:
-                            # Handle rollback results
-                            modifier_removed = matching_result.get('modifier_removed', False)
-                            reason = matching_result.get('reason', 'Unknown error')
-                            
-                            if modifier_removed:
-                                status = 1  # Rollback successful
-                            else:
-                                status = 3  # No changes to rollback
-                                # Provide more specific reason for rollback failure
-                                if 'claim has already been created' in reason.lower():
-                                    reason = "not eligible for rollback: claim already created, cannot modify services"
-                                elif 'no eligible services' in reason.lower() or 'no procedures found' in reason.lower():
-                                    reason = "not eligible for rollback: no modifier 25 found to remove"
-                                elif reason == 'Unknown error' or not reason:
-                                    reason = "Eligible for rollback but claim already created"
+                if matching_result:
+                    if request.is_rollback:
+                        # Handle rollback results
+                        modifier_removed = matching_result.get('modifier_removed', False)
+                        reason = matching_result.get('reason', 'Unknown error')
+                        
+                        if modifier_removed:
+                            status = 1  # Rollback successful
+                        else:
+                            status = 3  # No changes to rollback
+                            # Provide more specific reason for rollback failure
+                            if 'claim has already been created' in reason.lower():
+                                reason = "not eligible for rollback: claim already created, cannot modify services"
+                            elif 'no eligible services' in reason.lower() or 'no procedures found' in reason.lower():
+                                reason = "not eligible for rollback: no modifier 25 found to remove"
+                            elif reason == 'Unknown error' or not reason:
+                                reason = "Eligible for rollback but claim already created"
                     else:
                         # Handle normal operation results
                         status, reason = self.determine_status_and_reason(

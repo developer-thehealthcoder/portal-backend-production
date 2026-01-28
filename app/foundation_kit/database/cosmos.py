@@ -8,18 +8,25 @@ from app.config import (
     COSMOS_CONTAINER_INSTITUTIONS,
     COSMOS_CONTAINER_MENU,
     COSMOS_CONTAINER_PASSWORD_RESETS,
-    REQUIRED_CONTAINERS,
-    COSMOS_API_URI,
-    COSMOS_API_PRIMARY_KEY,
-    COSMOS_DATABASE
+    REQUIRED_CONTAINERS
 )
 
 load_dotenv()
 
-# Cosmos DB configuration - use values from config.py
-COSMOS_URI = COSMOS_API_URI
-COSMOS_KEY = COSMOS_API_PRIMARY_KEY
-DATABASE_NAME = COSMOS_DATABASE
+# Cosmos DB configuration
+COSMOS_URI = os.getenv("COSMOS_API_URI")
+COSMOS_KEY = os.getenv("COSMOS_API_PRIMARY_KEY")
+
+# Determine database name based on environment
+# If DEPLOYMENT_ENVIRONMENT is production, use production database
+# Otherwise use DATABASE_NAME from env or default to staging
+DEPLOYMENT_ENV = os.getenv("DEPLOYMENT_ENVIRONMENT", "").lower()
+if DEPLOYMENT_ENV == "production":
+    # Production environment - use production database
+    DATABASE_NAME = os.getenv("COSMOS_DATABASE_PRODUCTION", "med-office-hq-production")
+else:
+    # Staging/sandbox - use DATABASE_NAME from env or default to staging
+    DATABASE_NAME = os.getenv("DATABASE_NAME", "med-office-hq")
 
 # Container configuration
 CONTAINER_CONFIG = {

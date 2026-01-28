@@ -59,8 +59,8 @@ class HoldRecordsFilter:
         self.base_url = settings.ATHENA_API_BASE_URL
         self.practice_id = settings.ATHENA_PRACTICE_ID
         
-        # Initialize AthenaService for API calls
-        self.athena_service = AthenaService()
+        # Initialize AthenaService for API calls (uses production if DEPLOYMENT_ENVIRONMENT=production)
+        self.athena_service = create_athena_service_for_production()
         
         logger.info(f"Initialized {self.name} v{self.version}")
     
