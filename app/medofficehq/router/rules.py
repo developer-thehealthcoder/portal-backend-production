@@ -620,13 +620,37 @@ async def unified_rules_endpoint(
 @router.get("/runs", response_model=List[Dict])
 async def get_runs():
     """
-    Get all runs (excluding archived projects)
+    Get all runs (excluding archived projects and fake/test projects)
     """
     run_container = get_container("runs")
     # Filter out archived projects - only return projects where archived is not true or doesn't exist
     query = "SELECT * FROM c WHERE (c.archived != true OR NOT IS_DEFINED(c.archived))"
     runs = list(run_container.query_items(query=query, enable_cross_partition_query=True))
-    return runs
+    
+    # Filter out fake/test projects
+    # Exclude projects with test/fake identifiers or names
+    fake_project_ids = ["1000000", "1000001", "1000002", "1000003", "1000004", "1000005", "10000001"]
+    filtered_runs = []
+    
+    for run in runs:
+        project_id = str(run.get("id", ""))
+        project_name = run.get("project_name", "").lower()
+        
+        # Skip if it's a known fake project ID
+        if project_id in fake_project_ids:
+            continue
+        
+        # Skip if project name matches "Project X" pattern (fake test data)
+        if project_name.startswith("project ") and project_name.replace("project ", "").strip().isdigit():
+            continue
+        
+        # Skip if project name contains test/fake keywords
+        if any(keyword in project_name for keyword in ["test", "fake", "dummy", "sample", "demo"]):
+            continue
+        
+        filtered_runs.append(run)
+    
+    return filtered_runs
 
 @router.get("/progress/{execution_id}", response_model=ProgressResponse)
 async def get_progress(execution_id: str):

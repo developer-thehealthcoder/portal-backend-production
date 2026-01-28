@@ -116,7 +116,7 @@ class Rule21:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services"
+                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",
@@ -276,7 +276,7 @@ class Rule21:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services/{service_id}"
+                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services/{service_id}"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",
@@ -326,7 +326,7 @@ class Rule21:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services/{service_id}"
+                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services/{service_id}"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",
@@ -658,7 +658,7 @@ class Rule21:
         try:
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{self.practice_id}/appointments/booked"
+                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/appointments/booked"
                 
                 params = {
                     'startdate': patient.appointmentdate,
