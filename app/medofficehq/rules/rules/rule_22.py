@@ -33,10 +33,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.medofficehq.core.config import settings
 from app.medofficehq.services.athena_service import AthenaService
-from app.medofficehq.core.environment_manager import (
-    environment_manager,
-    AthenaEnvironment
-)
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -84,21 +80,12 @@ class Rule22:
         self.name = "Procedure Code Modifier Assignment"
         self.version = "3.0"
         
-        # Get production credentials (this is a production-only backend)
-        credentials = environment_manager.get_athena_credentials(AthenaEnvironment.PRODUCTION)
-        
         # API configuration
-        self.base_url = credentials["base_url"]
-        self.practice_id = credentials["practice_id"]
+        self.base_url = settings.ATHENA_API_BASE_URL
+        self.practice_id = settings.ATHENA_PRACTICE_ID
         
-        # Initialize AthenaService with production credentials
-        self.athena_service = AthenaService(
-            client_id=credentials["client_id"],
-            client_secret=credentials["client_secret"],
-            practice_id=credentials["practice_id"],
-            base_url=credentials["base_url"],
-            environment="production"
-        )
+        # Initialize AthenaService for API calls
+        self.athena_service = AthenaService()
         
         # Target procedure codes to check
         self.target_procedure_codes = [
@@ -278,7 +265,7 @@ class Rule22:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services/{service_id}"
+                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services/{service_id}"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",
@@ -341,7 +328,7 @@ class Rule22:
             
             # Create a custom request with longer timeout
             async with httpx.AsyncClient(verify=True, timeout=httpx.Timeout(120.0)) as client:
-                url = f"{self.athena_service.base_url}/{settings.ATHENA_PRACTICE_ID}/encounter/{encounter_id}/services/{service_id}"
+                url = f"{self.athena_service.base_url}/{self.practice_id}/encounter/{encounter_id}/services/{service_id}"
                 
                 headers = {
                     "Authorization": f"Bearer {token}",

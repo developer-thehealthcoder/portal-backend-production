@@ -55,21 +55,12 @@ class HoldRecordsFilter:
         self.name = "Hold Records Filter"
         self.version = "1.0"
         
-        # Get production credentials (this is a production-only backend)
-        credentials = environment_manager.get_athena_credentials(AthenaEnvironment.PRODUCTION)
-        
         # API configuration
-        self.base_url = credentials["base_url"]
-        self.practice_id = credentials["practice_id"]
+        self.base_url = settings.ATHENA_API_BASE_URL
+        self.practice_id = settings.ATHENA_PRACTICE_ID
         
-        # Initialize AthenaService with production credentials
-        self.athena_service = AthenaService(
-            client_id=credentials["client_id"],
-            client_secret=credentials["client_secret"],
-            practice_id=credentials["practice_id"],
-            base_url=credentials["base_url"],
-            environment="production"
-        )
+        # Initialize AthenaService for API calls
+        self.athena_service = AthenaService()
         
         logger.info(f"Initialized {self.name} v{self.version}")
     
